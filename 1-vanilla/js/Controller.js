@@ -19,6 +19,10 @@ export default class Controller {
     this.searchFormView
       .on("@submit", (event) => this.search(event.detail.value))
       .on("@reset", () => this.reset());
+
+      //TODO
+    this.tabView
+      .on("@change", event => this.changeTab(event.detail.value));  
   }
 
   search(searchKeyword) {
@@ -34,6 +38,13 @@ export default class Controller {
     this.store.searchResult = [];
     this.render();
     //this.searchResultView.hide(); -> 해당 방법도 가능
+  }
+
+    
+  changeTab(tab) {
+      console.log(tag, "changeTab", tab);
+      this.store.selectedTab = tab;
+      this.render();
   }
 
   //controller가 관리하는 view들을 이용해 화면에 출력하는 기능

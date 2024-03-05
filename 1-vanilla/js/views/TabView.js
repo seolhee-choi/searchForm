@@ -1,5 +1,7 @@
-import { on, qs, qsAll } from "../helpers.js";
+import { delegate, on, qs, qsAll } from "../helpers.js";
 import View from "./View.js";
+
+const tag = "[TabView]";
 
 export const TabType = {
     KEYWORD: "KEYWORD",
@@ -17,8 +19,19 @@ export default class TabView extends View {
         this.template = new Template();
 
         //TODO 호출하는 함수 CLICK이벤트
-    
+        this.bindEvents();
     }
+
+    bindEvents() {
+        delegate(this.element, "click", "li", event => this.handleClick(event));
+    }
+
+    handleClick() {
+        console.log(tag, event.target);
+        const value = event.target.dataset.tab;
+        this.emit("@change", { value });
+    }
+
 
     show(selectedTab) {
         this.element.innerHTML = this.template.getTabList();
