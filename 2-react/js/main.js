@@ -10,17 +10,42 @@ class App extends React.Component {
         };
     }
 
-    // 리액트에서 이벤트를 처리하는 Handler이름은 함수명이 handle로 시작됨이 관례
-    handleChangeInput(event) {
-        // this.state.searchKeyword = event.target.value;
-        // this.forceUpdate();
 
-        this.setState({
-            searchKeyword: event.target.value,
-        });
+    handleSubmit(event) {
+        event.preventDefault();
+        console.log('TODO : handleSubmit', this.state.searchKeyword);
     };
 
+    handleReset() {
+        //setState는 항상 비동기로 동작함
+        // this.setState({ searchKeyword: "" });
+        // console.log('TODO: handleReset', this.state.searchKeyword);
+        
+        this.setState(() => {
+            return { searchKeyword: "" }
+        }, () => {
+            console.log('TODO: handleReset', this.state.searchKeyword);
+        });
+    }
+
+    // 리액트에서 이벤트를 처리하는 Handler이름은 함수명이 handle로 시작됨이 관례
+    handleChangeInput(event) {
+        const searchKeyword = event.target.value;
+
+        if (searchKeyword.length <= 0) {
+            this.handleReset();
+        }
+        //setState 메서드를 통해서만 상태 변경해야함 - component와의 약속
+        this.setState({ searchKeyword: event.target.value,});
+    };
+
+
     render() {
+        // let resetButton = null;
+
+        // if (this.state.searchKeyword.length > 0) {
+        //     resetButton = <button type="reset" className="btn-reset"></button>
+        // }
         return (
             <>
                 <header>
@@ -28,9 +53,14 @@ class App extends React.Component {
                     <h2 className="container">검색</h2>
                 </header>
                 <div className="container">
-                    <form>
+                    <form 
+                        onSubmit={(event) => this.handleSubmit(event)} 
+                        onReset={() => this.handleReset()}
+                    >
                         <input type="text" placeholder="검색어를 입력하세요" autoFocus value={this.state.searchKeyword} onChange={event => this.handleChangeInput(event)}/>
-                        <button type="reset" className="btn-reset"></button>
+                        {this.state.searchKeyword.length > 0 && (
+                            <button type="reset" className="btn-reset"></button>
+                        )}
                     </form>
                 </div>
             </>
