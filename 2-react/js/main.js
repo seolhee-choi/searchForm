@@ -2,6 +2,16 @@
 //2. main.js는 js코드의 시작점이고, 모듈별로 파일이 추가되면 해당 파일에서 import해 관리 예정
 import store from "./js/store.js";
 
+const TabType = {
+    KEYWORD: "KEYWORD",
+    HISTORY: "HISTORY",
+};
+
+const TabLabel = {
+    [TabType.KEYWORD]: "추천 검색어",
+    [TabType.HISTORY]: "최근 검색어",
+};
+
 class App extends React.Component {
     constructor() {
         super();
@@ -10,6 +20,7 @@ class App extends React.Component {
             searchKeyword: "",
             searchResult: [],
             submitted: false,
+            selectedTab: TabType.KEYWORD,
         };
     }
 
@@ -32,7 +43,7 @@ class App extends React.Component {
         this.setState({
             searchKeyword: "",
             submitted: false,
-            // searchResult: [],
+            //tab 상태추가
         });
     }
 
@@ -47,18 +58,19 @@ class App extends React.Component {
         this.setState({ searchKeyword });
     };
 
+   
 
     render() {
         const searchForm = (
-        <form 
-            onSubmit={(event) => this.handleSubmit(event)} 
-            onReset={() => this.handleReset()}
-        >
-            <input type="text" placeholder="검색어를 입력하세요" autoFocus value={this.state.searchKeyword} onChange={event => this.handleChangeInput(event)}/>
-            {this.state.searchKeyword.length > 0 && (
-                <button type="reset" className="btn-reset"></button>
-            )}
-        </form>
+            <form 
+                onSubmit={(event) => this.handleSubmit(event)} 
+                onReset={() => this.handleReset()}
+            >
+                <input type="text" placeholder="검색어를 입력하세요" autoFocus value={this.state.searchKeyword} onChange={event => this.handleChangeInput(event)}/>
+                {this.state.searchKeyword.length > 0 && (
+                    <button type="reset" className="btn-reset"></button>
+                )}
+            </form>
         );
 
         const searchResult = 
@@ -77,6 +89,25 @@ class App extends React.Component {
                 <div className="empty-box">검색 결과가 없습니다</div>
             );
 
+        const tabs = (
+            <>
+                <ul className="tabs">
+                    {Object.values(TabType).map((tabType) => (
+                        //TODO ONCLICK추가
+                        <li 
+                            className={this.state.selectedTab === tabType ? "active" : ""}
+                            key={tabType}
+                            onClick={() => this.setState({ selectedTab: tabType })}
+                        >
+                            {TabLabel[tabType]}
+                        </li>
+                    ))}
+                </ul>
+                {this.state.selectedTab === TabType.KEYWORD && <>TODO: 추천 검색어</>}
+                {this.state.selectedTab === TabType.HISTORY && <>TODO: 최근 검색어</>}
+            </>
+        );
+
         return (
             <>
                 <header>
@@ -86,7 +117,7 @@ class App extends React.Component {
                 <div className="container">
                     {searchForm}
                     <div className="content">
-                        {this.state.submitted && searchResult}
+                        {this.state.submitted ? searchResult : tabs}
                     </div>
                 </div>
             </>
